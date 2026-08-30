@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import { useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft, ArrowRight, Loader2, Sparkles, Check } from "lucide-react";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/hooks/use-session";
 import { useProfile } from "@/hooks/use-profile";
 import { Button } from "@/components/ui/button";
@@ -27,7 +27,7 @@ import {
   etapaLabel,
   type EtapaValue,
 } from "@/lib/curriculo";
-import { buildMockPlan } from "@/lib/plan-content";
+import { createLessonPlan } from "@/lib/plan-generation.functions";
 
 export const Route = createFileRoute("/_authenticated/criar-plano")({
   head: () => ({
@@ -54,6 +54,7 @@ function CriarPlanoPage() {
   const queryClient = useQueryClient();
   const { user } = useSession();
   const { data: profile } = useProfile(user?.id);
+  const gerar = useServerFn(createLessonPlan);
 
   const [passo, setPasso] = useState(0);
   const [etapa, setEtapa] = useState<EtapaValue | "">("");
@@ -80,42 +81,30 @@ function CriarPlanoPage() {
     }
 
     setGerando(true);
-    await new Promise((r) => setTimeout(r, 2000));
+    try {
+      const { id } = await gerar({
+        data: {
+          etapa: etapaLabel(etapa),
+          ano,
+          componente,
+          tema: tema.trim(),
+          duracao: Number(duracao),
+          observacoes: observacoes.trim() || undefined,
+        },
+      });
 
-    const content = buildMockPlan({
-      etapa: etapa as string,
-      ano,
-      componente,
-      tema: tema.trim(),
-      duracao: Number(duracao),
-      observacoes,
-    });
-
-    const { data, error } = await supabase
-      .from("lesson_plans")
-      .insert({
-        user_id: user.id,
-        title: content.title,
-        grade_level: ano,
-        subject: componente,
-        theme: tema.trim(),
-        bncc_codes: content.bnccCodes.map((b) => b.code),
-        content_json: JSON.parse(JSON.stringify(content)),
-        duration_minutes: Number(duracao),
-      })
-      .select("id")
-      .single();
-
-    setGerando(false);
-
-    if (error || !data) {
-      toast.error("Não consegui gerar o plano", { description: "Tente novamente em instantes." });
-      return;
+      await queryClient.invalidateQueries();
+      toast.success("Plano de aula pronto!", {
+        description: "Gerado com IA e alinhado à BNCC.",
+      });
+      navigate({ to: "/plano/$id", params: { id } });
+    } catch (err) {
+      toast.error("Não consegui gerar o plano", {
+        description: err instanceof Error ? err.message : "Tente novamente em instantes.",
+      });
+    } finally {
+      setGerando(false);
     }
-
-    await queryClient.invalidateQueries();
-    toast.success("Gerar Plano de Aula", { description: "Seu plano está pronto." });
-    navigate({ to: "/plano/$id", params: { id: data.id } });
   }
 
   if (gerando) {

@@ -100,7 +100,7 @@ function CriarPlanoPage() {
         subject: componente,
         theme: tema.trim(),
         bncc_codes: content.bnccCodes.map((b) => b.code),
-        content_json: content as unknown as Record<string, unknown>,
+        content_json: JSON.parse(JSON.stringify(content)),
         duration_minutes: Number(duracao),
       })
       .select("id")

@@ -15,6 +15,7 @@ import { Route as CadastroRouteImport } from './routes/cadastro'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthenticatedCriarPlanoRouteImport } from './routes/_authenticated/criar-plano'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedMeusPlanosRouteImport } from './routes/_authenticated/meus-planos'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -45,6 +46,11 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedMeusPlanosRoute = AuthenticatedMeusPlanosRouteImport.update({
+  id: '/meus-planos',
+  path: '/meus-planos',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -52,6 +58,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/criar-plano': typeof AuthenticatedCriarPlanoRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/meus-planos': typeof AuthenticatedMeusPlanosRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -59,6 +66,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/criar-plano': typeof AuthenticatedCriarPlanoRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/meus-planos': typeof AuthenticatedMeusPlanosRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -68,12 +76,25 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/_authenticated/criar-plano': typeof AuthenticatedCriarPlanoRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/meus-planos': typeof AuthenticatedMeusPlanosRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/cadastro' | '/login' | '/criar-plano' | '/dashboard'
+  fullPaths:
+    | '/'
+    | '/cadastro'
+    | '/login'
+    | '/criar-plano'
+    | '/dashboard'
+    | '/meus-planos'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/cadastro' | '/login' | '/criar-plano' | '/dashboard'
+  to:
+    | '/'
+    | '/cadastro'
+    | '/login'
+    | '/criar-plano'
+    | '/dashboard'
+    | '/meus-planos'
   id:
     | '__root__'
     | '/'
@@ -82,6 +103,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/_authenticated/criar-plano'
     | '/_authenticated/dashboard'
+    | '/_authenticated/meus-planos'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -135,17 +157,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/meus-planos': {
+      id: '/_authenticated/meus-planos'
+      path: '/meus-planos'
+      fullPath: '/meus-planos'
+      preLoaderRoute: typeof AuthenticatedMeusPlanosRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedCriarPlanoRoute: typeof AuthenticatedCriarPlanoRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedMeusPlanosRoute: typeof AuthenticatedMeusPlanosRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedCriarPlanoRoute: AuthenticatedCriarPlanoRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedMeusPlanosRoute: AuthenticatedMeusPlanosRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =

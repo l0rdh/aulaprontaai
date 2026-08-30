@@ -7,7 +7,7 @@ export type GenerationInput = {
   componente: string;
   tema: string;
   duracao: number;
-  observacoes?: string;
+  observacoes?: string | undefined;
 };
 
 export class PlanGenerationError extends Error {

@@ -61,7 +61,7 @@ export function buildUserPrompt(input: {
   componente: string;
   tema: string;
   duracao: number;
-  observacoes?: string;
+  observacoes?: string | undefined;
 }) {
   return [
     `etapa="${input.etapa}"`,

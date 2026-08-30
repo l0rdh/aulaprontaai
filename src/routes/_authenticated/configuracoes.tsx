@@ -60,8 +60,8 @@ function ConfiguracoesPage() {
   useEffect(() => {
     if (!profile) return;
     setNome(profile.full_name ?? "");
-    setEscola(profile.school ?? "");
-    setEtapa(profile.teaching_stage ?? "");
+    setEscola(profile.school_name ?? "");
+    setEtapa(profile.subjects_taught?.[0] ?? "");
   }, [profile]);
 
   async function salvar() {
@@ -77,8 +77,8 @@ function ConfiguracoesPage() {
       .from("profiles")
       .update({
         full_name: parsed.data.full_name,
-        school: parsed.data.school || null,
-        teaching_stage: etapa || null,
+        school_name: parsed.data.school || null,
+        subjects_taught: etapa ? [etapa] : [],
       })
       .eq("id", user.id);
     setSalvando(false);

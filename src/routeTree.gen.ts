@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as CadastroRouteImport } from './routes/cadastro'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as AuthenticatedConfiguracoesRouteImport } from './routes/_authenticated/configuracoes'
 import { Route as AuthenticatedCriarPlanoRouteImport } from './routes/_authenticated/criar-plano'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedMeusPlanosRouteImport } from './routes/_authenticated/meus-planos'
@@ -37,6 +38,12 @@ const LoginRoute = LoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedConfiguracoesRoute =
+  AuthenticatedConfiguracoesRouteImport.update({
+    id: '/configuracoes',
+    path: '/configuracoes',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedCriarPlanoRoute = AuthenticatedCriarPlanoRouteImport.update({
   id: '/criar-plano',
   path: '/criar-plano',
@@ -62,6 +69,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/cadastro': typeof CadastroRoute
   '/login': typeof LoginRoute
+  '/configuracoes': typeof AuthenticatedConfiguracoesRoute
   '/criar-plano': typeof AuthenticatedCriarPlanoRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/meus-planos': typeof AuthenticatedMeusPlanosRoute
@@ -71,6 +79,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/cadastro': typeof CadastroRoute
   '/login': typeof LoginRoute
+  '/configuracoes': typeof AuthenticatedConfiguracoesRoute
   '/criar-plano': typeof AuthenticatedCriarPlanoRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/meus-planos': typeof AuthenticatedMeusPlanosRoute
@@ -82,6 +91,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/cadastro': typeof CadastroRoute
   '/login': typeof LoginRoute
+  '/_authenticated/configuracoes': typeof AuthenticatedConfiguracoesRoute
   '/_authenticated/criar-plano': typeof AuthenticatedCriarPlanoRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/meus-planos': typeof AuthenticatedMeusPlanosRoute
@@ -93,6 +103,7 @@ export interface FileRouteTypes {
     | '/'
     | '/cadastro'
     | '/login'
+    | '/configuracoes'
     | '/criar-plano'
     | '/dashboard'
     | '/meus-planos'
@@ -102,6 +113,7 @@ export interface FileRouteTypes {
     | '/'
     | '/cadastro'
     | '/login'
+    | '/configuracoes'
     | '/criar-plano'
     | '/dashboard'
     | '/meus-planos'
@@ -112,6 +124,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/cadastro'
     | '/login'
+    | '/_authenticated/configuracoes'
     | '/_authenticated/criar-plano'
     | '/_authenticated/dashboard'
     | '/_authenticated/meus-planos'
@@ -155,6 +168,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/configuracoes': {
+      id: '/_authenticated/configuracoes'
+      path: '/configuracoes'
+      fullPath: '/configuracoes'
+      preLoaderRoute: typeof AuthenticatedConfiguracoesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/criar-plano': {
       id: '/_authenticated/criar-plano'
       path: '/criar-plano'
@@ -187,6 +207,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedConfiguracoesRoute: typeof AuthenticatedConfiguracoesRoute
   AuthenticatedCriarPlanoRoute: typeof AuthenticatedCriarPlanoRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedMeusPlanosRoute: typeof AuthenticatedMeusPlanosRoute
@@ -194,6 +215,7 @@ interface AuthenticatedRouteRouteChildren {
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedConfiguracoesRoute: AuthenticatedConfiguracoesRoute,
   AuthenticatedCriarPlanoRoute: AuthenticatedCriarPlanoRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedMeusPlanosRoute: AuthenticatedMeusPlanosRoute,

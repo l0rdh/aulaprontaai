@@ -94,7 +94,7 @@ Nesta ordem:
 
 - Prova social: 2-3 depoimentos fictícios de professores (nome, disciplina, escola — claramente placeholders para o usuário trocar depois) + um contador tipo "X planos gerados" com valor placeholder.
 
-- Preços: comparação Free (3 créditos grátis, sem cartão) vs Pro (créditos ilimitados ou pacote maior, valor placeholder tipo R$29,90/mês).
+- Preços: comparação Free (3 créditos grátis, sem cartão) vs Pro (créditos ilimitados ou pacote maior, valor placeholder tipo R$19,90/mês).
 
 - FAQ: accordion com 4-5 perguntas (Preciso saber usar IA? Os códigos BNCC são confiáveis? Funciona pra Educação Infantil? Posso cancelar quando quiser?).
 

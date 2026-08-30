@@ -1,4 +1,6 @@
-import { Check, Sparkles } from "lucide-react";
+import { useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
+import { Check, Sparkles, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import {
   Dialog,
@@ -9,6 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { startKiwifyCheckout } from "@/lib/kiwify-checkout.functions";
 
 const FREE = [
   "3 créditos grátis ao criar a conta",
@@ -32,6 +35,24 @@ export function UpgradeDialog({
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
+  const [carregando, setCarregando] = useState(false);
+  const iniciarCheckout = useServerFn(startKiwifyCheckout);
+
+  async function handleUpgrade() {
+    setCarregando(true);
+    try {
+      const { checkoutLink } = await iniciarCheckout({});
+      // Redirecionar para checkout da Kiwify
+      window.location.href = checkoutLink;
+    } catch (error) {
+      toast.error("Erro ao iniciar checkout", {
+        description:
+          error instanceof Error ? error.message : "Tente novamente em alguns instantes.",
+      });
+      setCarregando(false);
+    }
+  }
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl">
@@ -67,7 +88,7 @@ export function UpgradeDialog({
               <Badge className="bg-ink text-ink-foreground">Recomendado</Badge>
             </div>
             <p className="mt-2 text-2xl font-semibold text-foreground">
-              R$ 29,90
+              R$ 19,90
               <span className="text-sm font-normal text-muted-foreground">/mês</span>
             </p>
             <ul className="mt-4 space-y-2">
@@ -80,10 +101,20 @@ export function UpgradeDialog({
             </ul>
             <Button
               className="mt-5 w-full"
-              onClick={() => toast("Em breve", { description: "A assinatura Pro está a caminho." })}
+              onClick={handleUpgrade}
+              disabled={carregando}
             >
-              <Sparkles aria-hidden />
-              Assinar Pro
+              {carregando ? (
+                <>
+                  <Loader2 className="animate-spin" aria-hidden />
+                  Redirecionando...
+                </>
+              ) : (
+                <>
+                  <Sparkles aria-hidden />
+                  Assinar Pro
+                </>
+              )}
             </Button>
           </div>
         </div>

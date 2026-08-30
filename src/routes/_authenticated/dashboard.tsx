@@ -9,6 +9,7 @@ import {
   CalendarClock,
   AlertTriangle,
   NotebookPen,
+  Sparkles,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/hooks/use-session";
@@ -62,6 +63,19 @@ function DashboardPage() {
         .select("id", { count: "exact", head: true });
       if (error) throw error;
       return count ?? 0;
+    },
+  });
+
+  const avaliacoesList = useQuery({
+    queryKey: ["dashboard-avaliacoes-list", user?.id],
+    enabled: Boolean(user?.id) && profile?.plan === "pro",
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("generated_exams")
+        .select("id, title, difficulty, question_count, created_at")
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return data;
     },
   });
 
@@ -130,6 +144,15 @@ function DashboardPage() {
                 Criar novo plano
               </Link>
             </Button>
+
+            {profile?.plan === "pro" && (
+              <Button size="lg" variant="outline" asChild>
+                <Link to="/criar-avaliacao">
+                  <Sparkles aria-hidden />
+                  Criar avaliação
+                </Link>
+              </Button>
+            )}
           </div>
         )}
       </section>
@@ -200,6 +223,61 @@ function DashboardPage() {
           </ul>
         )}
       </section>
+
+      {profile?.plan === "pro" && (
+        <section>
+          <div className="mb-3 flex items-center justify-between">
+            <h2 className="font-display text-lg font-semibold text-ink">Avaliações recentes</h2>
+            <Link to="/dashboard" className="text-sm font-medium text-primary hover:underline">
+              Ver todas
+            </Link>
+          </div>
+
+          {avaliacoesList.isLoading ? (
+            <div className="space-y-3">
+              {[0, 1, 2].map((i) => (
+                <Skeleton key={i} className="h-20 w-full rounded-lg" />
+              ))}
+            </div>
+          ) : !avaliacoesList.data || avaliacoesList.data.length === 0 ? (
+            <div className="rounded-lg border border-dashed border-border bg-card p-10 text-center">
+              <ClipboardList className="mx-auto h-8 w-8 text-muted-foreground" aria-hidden />
+              <h3 className="mt-3 font-display text-lg font-semibold text-ink">
+                Você ainda não criou avaliações
+              </h3>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Gere suas primeiras avaliações personalizadas com IA.
+              </p>
+              <Button className="mt-5" asChild>
+                <Link to="/criar-avaliacao">
+                  <Sparkles aria-hidden />
+                  Criar minha primeira avaliação
+                </Link>
+              </Button>
+            </div>
+          ) : (
+            <ul className="space-y-3">
+              {avaliacoesList.data.slice(0, 5).map((a) => (
+                <li key={a.id}>
+                  <Link
+                    to="/avaliacao/$id"
+                    params={{ id: a.id }}
+                    className="flex items-center justify-between gap-4 rounded-lg border border-border bg-card p-4 shadow-sm transition-colors hover:border-ink/40"
+                  >
+                    <div className="min-w-0">
+                      <p className="truncate font-medium text-ink">{a.title}</p>
+                      <p className="mt-1 text-xs text-muted-foreground">
+                        {a.question_count} questões · {a.difficulty} · {formatarData(a.created_at)}
+                      </p>
+                    </div>
+                    <Badge variant="secondary">{a.difficulty}</Badge>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+      )}
     </div>
   );
 }

@@ -179,6 +179,12 @@ function PlanoPage() {
         </Secao>
       )}
 
+      {content.notes && (
+        <p className="rounded-md border border-warning/40 bg-warning/10 p-3 text-xs text-warning">
+          {content.notes}
+        </p>
+      )}
+
       {content.inclusionNotes && (
         <Secao titulo="Adaptações e inclusão" icon={ClipboardCheck}>
           <p className="text-muted-foreground">{content.inclusionNotes}</p>

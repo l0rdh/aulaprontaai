@@ -73,7 +73,7 @@ function DashboardPage() {
             acc[p.subject] = (acc[p.subject] ?? 0) + 1;
             return acc;
           }, {}),
-        ).sort((a, b) => b[1] - a[1])[0][0]
+        ).sort((a, b) => b[1] - a[1])[0]?.[0] ?? "—"
       : "—";
 
   const creditosBaixos = (profile?.credits ?? 0) <= 1;
